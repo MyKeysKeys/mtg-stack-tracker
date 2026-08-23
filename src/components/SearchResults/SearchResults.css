@@ -1,0 +1,34 @@
+/mtg-stack-tracker/mtg-stack-tracker/src/components/SearchResults/SearchResults.css
+
+.search-results {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-results li {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-results li:hover {
+  background-color: #f0f0f0;
+}
+
+.search-results img {
+  width: 50px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.search-results .card-name {
+  font-weight: bold;
+}
+
+.search-results .card-type {
+  font-style: italic;
+  color: #555;
+}
