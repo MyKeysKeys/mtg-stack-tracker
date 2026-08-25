@@ -48,7 +48,9 @@ input {
   font-size: 1.45rem;
 }
 
-.app h1,
+.app h1 {
+  color: var(--muted-gold);
+}
 .app h2,
 .app p {
   color: var(--gold);
