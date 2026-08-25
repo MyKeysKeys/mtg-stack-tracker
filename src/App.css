@@ -19,7 +19,6 @@ body {
   color: var(--gold);
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.08rem;
-  text-shadow: 2px 2px 4px #352c1c;
 }
 
 .app {
@@ -50,6 +49,7 @@ input {
 
 .app h1 {
   color: var(--muted-gold);
+  text-shadow: 2px 2px 4px #352c1c;
 }
 .app h2,
 .app p {
