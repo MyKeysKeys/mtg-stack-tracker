@@ -102,7 +102,7 @@ function App() {
   }
 
   function addToStack(card) {
-    setStack((current) => [card, ...current]);
+    setStack((current) => [...current, card]);
     setSelectedCard(card);
   }
 
@@ -208,7 +208,7 @@ function App() {
                       ))}
                     </span>
                   </strong>
-                  <span>{index === 0 ? 'Resolves next' : `Position ${stack.length - index}`}</span>
+                  <span>{index === 0 ? 'Resolves next' : `Position ${index}`}</span>
                 </div>
                 <button
                   type="button"
