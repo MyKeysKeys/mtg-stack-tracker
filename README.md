@@ -69,7 +69,9 @@ mtg-stack-tracker
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+Contributions are welcome! When opening an issue, choose the matching template for a bug report or enhancement request and include the requested details. This helps contributors reproduce problems, discuss ideas, and test improvements consistently.
+
+Pull requests should explain what changed and how it was tested.
 
 ## License
 
