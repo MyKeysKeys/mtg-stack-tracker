@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CardVisualizer from './components/CardVisualizer/CardVisualizer';
 import './App.css';
 
@@ -9,21 +9,48 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [searchNonce, setSearchNonce] = useState(0);
 
-  async function searchCards(event) {
-    event.preventDefault();
-    if (!query.trim()) return;
+  useEffect(() => {
+    const trimmedQuery = query.trim();
 
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-      setResults(data.data ?? []);
-    } finally {
+    if (!trimmedQuery) {
+      setResults([]);
       setLoading(false);
+      return;
     }
+
+    setResults([]);
+    const controller = new AbortController();
+    const searchTimeout = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.scryfall.com/cards/search?q=${encodeURIComponent(trimmedQuery)}`,
+          { signal: controller.signal }
+        );
+        const data = await response.json();
+        setResults(data.data ?? []);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setResults([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(searchTimeout);
+    };
+  }, [query, searchNonce]);
+
+  function searchCards(event) {
+    event.preventDefault();
+    setSearchNonce((current) => current + 1);
   }
 
   function addToStack(card) {
@@ -58,9 +85,15 @@ function App() {
               <button
                 key={card.id}
                 onClick={() => addToStack(card)}
-                onMouseEnter={() => setHoveredCard(card)}
+                onMouseEnter={() => {
+                  setHoveredCard(card);
+                  setSelectedCard(card);
+                }}
                 onMouseLeave={() => setHoveredCard(null)}
-                onFocus={() => setHoveredCard(card)}
+                onFocus={() => {
+                  setHoveredCard(card);
+                  setSelectedCard(card);
+                }}
                 onBlur={() => setHoveredCard(null)}
               >
                 {card.name}
@@ -75,7 +108,10 @@ function App() {
             <div
               className="stack-card"
               key={`${card.id}-${index}`}
-              onMouseEnter={() => setHoveredCard(card)}
+              onMouseEnter={() => {
+                setHoveredCard(card);
+                setSelectedCard(card);
+              }}
               onMouseLeave={() => setHoveredCard(null)}
             >
               <img
