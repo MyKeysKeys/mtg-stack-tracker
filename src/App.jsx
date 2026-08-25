@@ -110,6 +110,10 @@ function App() {
     setStack((current) => current.filter((_, cardIndex) => cardIndex !== index));
   }
 
+  function clearStack() {
+    setStack([]);
+  }
+
   return (
     <main className="app">
       <h1>MTG Stack Tracker</h1>
@@ -162,7 +166,17 @@ function App() {
         </section>
 
         <section className="stack-section">
-          <h2>Stack ({stack.length} {stack.length === 1 ? 'item' : 'items'})</h2>
+          <div className="stack-heading">
+            <h2>Stack ({stack.length} {stack.length === 1 ? 'item' : 'items'})</h2>
+            <button
+              type="button"
+              className="clear-stack-button"
+              onClick={clearStack}
+              disabled={stack.length === 0}
+            >
+              Clear all
+            </button>
+          </div>
           <div className="stack-list">
             {stack.map((card, index) => (
               <div
