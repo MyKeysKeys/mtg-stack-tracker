@@ -3,12 +3,14 @@ import CardVisualizer from './components/CardVisualizer/CardVisualizer';
 import './App.css';
 
 const colorOrder = ['W', 'U', 'B', 'R', 'G'];
+const colorlessSymbol = 'C';
 const colorNames = {
   W: 'White',
   U: 'Blue',
   B: 'Black',
   R: 'Red',
   G: 'Green',
+  C: 'Colorless',
 };
 const colorValues = {
   W: '#f3e8b0',
@@ -16,10 +18,17 @@ const colorValues = {
   B: '#6d6675',
   R: '#d87568',
   G: '#7dab73',
+  C: '#e5e2dc',
 };
 
 function getCardColors(card) {
-  return colorOrder.filter((color) => card.colors?.includes(color));
+  const colors = colorOrder.filter((color) => card.colors?.includes(color));
+
+  if (colors.length === 0 && card.type_line?.includes('Artifact')) {
+    return [colorlessSymbol];
+  }
+
+  return colors;
 }
 
 function getCardBackground(card) {
