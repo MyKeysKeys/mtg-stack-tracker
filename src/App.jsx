@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CardVisualizer from './components/CardVisualizer/CardVisualizer';
 import './App.css';
 
@@ -67,6 +67,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [searchNonce, setSearchNonce] = useState(0);
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const dragPreviewRef = useRef(null);
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const trimmedQuery = query.trim();
@@ -119,8 +122,69 @@ function App() {
     setStack((current) => current.filter((_, cardIndex) => cardIndex !== index));
   }
 
+  function duplicateStack(index) {
+    setStack((current) => [
+      ...current.slice(0, index + 1),
+      current[index],
+      ...current.slice(index + 1),
+    ]);
+  }
+
   function clearStack() {
     setStack([]);
+  }
+
+  function moveStackCard(dropIndex) {
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      return;
+    }
+
+    setStack((current) => {
+      const reorderedStack = [...current];
+      const [draggedCard] = reorderedStack.splice(draggedIndex, 1);
+      const insertionIndex = draggedIndex < dropIndex ? dropIndex - 1 : dropIndex;
+
+      reorderedStack.splice(insertionIndex, 0, draggedCard);
+      return reorderedStack;
+    });
+    setDraggedIndex(draggedIndex < dropIndex ? dropIndex - 1 : dropIndex);
+  }
+
+  function startDragging(event, index) {
+    const cardPreview = event.currentTarget.cloneNode(true);
+    const cardBounds = event.currentTarget.getBoundingClientRect();
+
+    cardPreview.classList.add('stack-card-drag-preview');
+    cardPreview.style.width = `${cardBounds.width}px`;
+    dragOffsetRef.current = {
+      x: event.clientX - cardBounds.left,
+      y: event.clientY - cardBounds.top,
+    };
+    cardPreview.style.left = `${event.clientX - dragOffsetRef.current.x}px`;
+    cardPreview.style.top = `${event.clientY - dragOffsetRef.current.y}px`;
+    document.body.appendChild(cardPreview);
+    dragPreviewRef.current = cardPreview;
+    event.dataTransfer.effectAllowed = 'move';
+    const transparentDragImage = document.createElement('canvas');
+    transparentDragImage.width = 1;
+    transparentDragImage.height = 1;
+    event.dataTransfer.setDragImage(transparentDragImage, 0, 0);
+    setDraggedIndex(index);
+  }
+
+  function updateDragPreview(event) {
+    if (!dragPreviewRef.current) {
+      return;
+    }
+
+    dragPreviewRef.current.style.left = `${event.clientX - dragOffsetRef.current.x}px`;
+    dragPreviewRef.current.style.top = `${event.clientY - dragOffsetRef.current.y}px`;
+  }
+
+  function stopDragging() {
+    dragPreviewRef.current?.remove();
+    dragPreviewRef.current = null;
+    setDraggedIndex(null);
   }
 
   return (
@@ -189,9 +253,25 @@ function App() {
           <div className="stack-list">
             {stack.map((card, index) => (
               <div
-                className={`stack-card${index === 0 ? ' stack-card-next' : ''}`}
+                className={`stack-card${index === 0 ? ' stack-card-next' : ''}${
+                  draggedIndex === index ? ' stack-card-dragging' : ''
+                }`}
                 key={`${card.id}-${index}`}
                 style={{ '--stack-card-background': getCardBackground(card) }}
+                draggable="true"
+                onDragStart={(event) => startDragging(event, index)}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  updateDragPreview(event);
+                  const bounds = event.currentTarget.getBoundingClientRect();
+                  const targetIndex = event.clientY < bounds.top + bounds.height / 2
+                    ? index
+                    : index + 1;
+
+                  moveStackCard(targetIndex);
+                }}
+                onDrop={stopDragging}
+                onDragEnd={stopDragging}
                 onMouseEnter={() => {
                   setHoveredCard(card);
                   setSelectedCard(card);
@@ -219,13 +299,28 @@ function App() {
                   </strong>
                   <span>{index === 0 ? 'Resolves next' : `Position ${index}`}</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => removeFromStack(index)}
-                  aria-label={`Remove ${card.name} from the stack`}
-                >
-                  Remove
-                </button>
+                <div className="stack-card-actions">
+                  <button
+                    type="button"
+                    className="stack-card-action stack-card-duplicate"
+                    onClick={() => duplicateStack(index)}
+                    aria-label={`Duplicate ${card.name} in the stack`}
+                    title={`Duplicate ${card.name} in the stack`}
+                  >
+                    <span className="duplicate-icon" aria-hidden="true">
+                      <span />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="stack-card-action stack-card-remove"
+                    onClick={() => removeFromStack(index)}
+                    aria-label={`Remove ${card.name} from the stack`}
+                    title={`Remove ${card.name} from the stack`}
+                  >
+                    &times;
+                  </button>
+                </div>
               </div>
             ))}
           </div>
