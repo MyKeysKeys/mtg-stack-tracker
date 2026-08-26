@@ -108,6 +108,26 @@ function App() {
     };
   }, [query, searchNonce]);
 
+  useEffect(() => {
+    function cleanupDragPreview() {
+      dragPreviewRef.current?.remove();
+      dragPreviewRef.current = null;
+      setDraggedIndex(null);
+    }
+
+    window.addEventListener('blur', cleanupDragPreview);
+    window.addEventListener('pagehide', cleanupDragPreview);
+    document.addEventListener('dragend', cleanupDragPreview, true);
+    document.addEventListener('visibilitychange', cleanupDragPreview);
+
+    return () => {
+      window.removeEventListener('blur', cleanupDragPreview);
+      window.removeEventListener('pagehide', cleanupDragPreview);
+      document.removeEventListener('dragend', cleanupDragPreview, true);
+      document.removeEventListener('visibilitychange', cleanupDragPreview);
+    };
+  }, []);
+
   function searchCards(event) {
     event.preventDefault();
     setSearchNonce((current) => current + 1);
@@ -238,7 +258,14 @@ function App() {
           </div>
         </section>
 
-        <section className="stack-section">
+        <section
+          className="stack-section"
+          onDragLeave={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              stopDragging();
+            }
+          }}
+        >
           <div className="stack-heading">
             <h2>Stack ({stack.length} {stack.length === 1 ? 'item' : 'items'})</h2>
             <button
