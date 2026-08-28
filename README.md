@@ -1,8 +1,14 @@
 # Magic: The Gathering Stack Tracker
 
+**🔗 [Live Demo](https://mykeyskeys.github.io/mtg-stack-tracker/)**
+
 ## Project Overview
 
 The Magic: The Gathering Stack Tracker is a web application designed to help players visualize and manage the Stack in the card game Magic: The Gathering. The Stack is the game zone where spells and abilities are placed when they are played and where they wait to resolve.
+
+### What is "The Stack"?
+
+In Magic: The Gathering, when a player casts a spell or activates an ability, it goes on "the Stack." Players can respond to spells on the Stack with their own spells or abilities, which also go on the Stack. The Stack resolves in **last in, first out (LIFO)** order—like a stack data structure. This application provides a visual way to track which spells and abilities are waiting to resolve.
 
 ## Purpose and Goals
 
@@ -14,12 +20,16 @@ The primary goal of this application is to provide a user-friendly interface for
 - **Stack Visualization**: Visually represent the Stack with card images and relevant information.
 - **Stack Controls**: Manage the Stack with options to add, remove, or clear cards.
 - **Card Visualizer**: Display a larger version of the selected card with detailed information.
+- **Drag & Drop Reordering**: Reorder cards on the Stack with intuitive drag-and-drop.
+
+## Technologies Used
+
+- **React 18** — Frontend framework
+- **Vite** — Fast build tool and development server
+- **Scryfall API** — Card data and images
+- **CSS3** — Styling and animations
 
 ## Getting Started
-
-### Prerequisites
-
-- Node.js and npm installed on your machine.
 
 ### Installation
 
@@ -31,41 +41,18 @@ The primary goal of this application is to provide a user-friendly interface for
    ```
    cd mtg-stack-tracker
    ```
-3. Install the dependencies:
+3. Install dependencies (requires Node.js and npm):
    ```
    npm install
    ```
 
 ### Running the Application
 
-To start the development server, run:
+Start the development server:
 ```
 npm start
 ```
 The application will be available at `http://localhost:3000`.
-
-## Project Structure
-
-```
-mtg-stack-tracker
-├── public
-├── src
-│   ├── components
-│   │   ├── CardVisualizer
-│   │   ├── Controls
-│   │   ├── Search
-│   │   ├── SearchResults
-│   │   └── Stack
-│   ├── services
-│   ├── App.jsx
-│   ├── App.css
-│   ├── main.jsx
-│   └── index.css
-├── .gitignore
-├── index.html
-├── package.json
-└── vite.config.js
-```
 
 ## Contributing
 
