@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 :root {
   --page-background: #0d1013;
   --panel-background: #15191e;
@@ -28,6 +37,15 @@ body {
   font-family: inherit;
 }
 
+.app h1 {
+  animation: fadeIn 0.6s ease-in;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+}
+
+.layout {
+  animation: fadeIn 0.6s ease-in 0.4s both;
+}
+
 button,
 input {
   font: inherit;
@@ -37,10 +55,6 @@ input {
 .app h2 {
   font-family: 'Cinzel', Georgia, serif;
   font-weight: 600;
-}
-
-.app h1 {
-  font-size: clamp(2rem, 5vw, 3.25rem);
 }
 
 .app h2 {
