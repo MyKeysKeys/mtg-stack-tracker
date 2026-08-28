@@ -352,6 +352,7 @@ input {
 .search-form input,
 .search-form button {
   border: 1px solid var(--gold-muted);
+  margin-bottom: 2px;
 }
 
 .search-form input {
