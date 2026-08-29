@@ -1,3 +1,7 @@
+/* ========================================
+   IMPORTS & ANIMATIONS
+   ======================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
 @keyframes fadeIn {
@@ -9,6 +13,10 @@
   }
 }
 
+/* ========================================
+   CSS VARIABLES & COLOR SCHEME
+   ======================================== */
+
 :root {
   --page-background: #0d1013;
   --panel-background: #15191e;
@@ -16,6 +24,10 @@
   --gold-muted: #8e6d2c;
   --muted-gold: #b99a60;
 }
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
 
 * {
   box-sizing: border-box;
@@ -30,6 +42,15 @@ body {
   font-size: 1.08rem;
 }
 
+button,
+input {
+  font: inherit;
+}
+
+/* ========================================
+   APP CONTAINER & TYPOGRAPHY
+   ======================================== */
+
 .app {
   max-width: 1200px;
   margin: 0 auto;
@@ -40,15 +61,8 @@ body {
 .app h1 {
   animation: fadeIn 0.6s ease-in;
   font-size: clamp(2rem, 5vw, 3.25rem);
-}
-
-.layout {
-  animation: fadeIn 0.6s ease-in 0.4s both;
-}
-
-button,
-input {
-  font: inherit;
+  color: var(--muted-gold);
+  text-shadow: 2px 2px 4px #352c1c;
 }
 
 .app h1,
@@ -59,72 +73,133 @@ input {
 
 .app h2 {
   font-size: 1.45rem;
+  color: var(--gold);
+  margin-top: 0;
 }
 
-.app h1 {
-  color: var(--muted-gold);
-  text-shadow: 2px 2px 4px #352c1c;
-}
-.app h2,
 .app p {
   color: var(--gold);
 }
 
-.container {
-  display: flex;
+/* ========================================
+   LAYOUT STRUCTURE
+   ======================================== */
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  align-items: start;
+  animation: fadeIn 0.6s ease-in 0.4s both;
 }
 
-.search {
-  width: 20%;
-  padding: 10px;
+.layout > section {
+  min-width: 0;
+  min-height: 260px;
+  padding: 24px;
+  border: 1px solid var(--gold-muted);
+  border-radius: 8px;
+  background: var(--panel-background);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
 }
 
-.stack {
-  width: 60%;
-  padding: 10px;
+.layout > section h2 {
+  margin-top: 0;
+}
+
+/* ========================================
+   SEARCH COMPONENT
+   ======================================== */
+
+.search-form input,
+.search-form button {
+  border: 1px solid var(--gold-muted);
+  margin-bottom: 4px;
+}
+
+.search-form input {
+  background: #0b0d10;
+  color: var(--gold);
+}
+
+.search-form input::placeholder {
+  color: var(--muted-gold);
+}
+
+.search-form button {
+  background: var(--gold);
+  color: #111;
+  cursor: pointer;
+}
+
+.search-form button:hover,
+.search-form button:focus-visible {
+  background: #edc66f;
+}
+
+.results {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.search-result {
+  display: flex;
   align-items: center;
-}
-
-.card-visualizer {
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  padding: 10px;
-  max-width: 420px;
-  box-sizing: border-box;
-  border: 0;
-  background: transparent;
+  padding: 10px 12px;
+  border: 1px solid #8e6d2c;
+  border-radius: 6px;
+  background: var(--stack-card-background);
+  cursor: pointer;
 }
 
-.card-visualizer img {
-  display: block;
-  width: 400px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
+.search-result:hover,
+.search-result:focus-visible {
+  filter: brightness(0.94);
 }
 
-.card-visualizer p {
-  line-height: 1.5;
+.search-result-name {
   overflow-wrap: anywhere;
 }
 
-.card img {
-  width: 100px;
-  height: auto;
+/* ========================================
+   STACK COMPONENT
+   ======================================== */
+
+.stack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.card-text {
-  display: none;
-  background: white;
-  padding: 10px;
-  border: 1px solid black;
-  position: absolute;
-  z-index: 10;
+.stack-heading h2 {
+  margin-bottom: 16px;
 }
 
-.card:hover .card-text {
-  display: block;
+.clear-stack-button {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--gold-muted);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.clear-stack-button:hover,
+.clear-stack-button:focus-visible {
+  background: var(--gold);
+  color: #111;
+}
+
+.clear-stack-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .stack-list {
@@ -161,6 +236,30 @@ input {
   left: 0;
   z-index: 1000;
   pointer-events: none;
+}
+
+.stack-card-details {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stack-card-details strong {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.stack-card-details span {
+  color: #000;
+  font-size: 0.85rem;
+}
+
+.stack-card-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .stack-card-actions {
@@ -237,57 +336,6 @@ input {
   line-height: 8px;
 }
 
-.stack-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.stack-heading h2 {
-  margin-bottom: 16px;
-}
-
-.clear-stack-button {
-  flex-shrink: 0;
-  padding: 6px 10px;
-  border: 1px solid var(--gold-muted);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--gold);
-  cursor: pointer;
-}
-
-.clear-stack-button:hover,
-.clear-stack-button:focus-visible {
-  background: var(--gold);
-  color: #111;
-}
-
-.clear-stack-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.stack-card-details {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stack-card-details strong {
-  overflow-wrap: anywhere;
-  font-weight: 700;
-}
-
-.stack-card-name {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
 .mana-symbols {
   display: inline-flex;
   gap: 3px;
@@ -298,96 +346,39 @@ input {
   height: 18px;
 }
 
-.search-result {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+/* ========================================
+   CARD VISUALIZER COMPONENT
+   ======================================== */
+
+.card-visualizer {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #8e6d2c;
-  border-radius: 6px;
-  background: var(--stack-card-background);
-  cursor: pointer;
+  padding: 10px;
+  max-width: 420px;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
 }
 
-.search-result-name {
+.card-visualizer img {
+  display: block;
+  width: 400px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.card-visualizer p {
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
-.search-result:hover,
-.search-result:focus-visible {
-  filter: brightness(0.94);
+.card-image-placeholder {
+  color: var(--gold-muted);
 }
 
-.stack-card-details span {
-  color: #000;
-  font-size: 0.85rem;
-}
-
-.results {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-}
-
-.input {
-  padding: 8px;
-  margin: 4px;
-}
-
-.button {
-  padding: 8px;
-  margin: 4px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
-  align-items: start;
-}
-
-.layout > section {
-  min-width: 0;
-  min-height: 260px;
-  padding: 24px;
-  border: 1px solid var(--gold-muted);
-  border-radius: 8px;
-  background: var(--panel-background);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
-}
-
-.layout > section h2 {
-  margin-top: 0;
-}
-
-.search-form input,
-.search-form button {
-  border: 1px solid var(--gold-muted);
-  margin-bottom: 4px;
-}
-
-.search-form input {
-  background: #0b0d10;
-  color: var(--gold);
-}
-
-.search-form input::placeholder {
-  color: var(--muted-gold);
-}
-
-.search-form button {
-  background: var(--gold);
-  color: #111;
-  cursor: pointer;
-}
-
-.search-form button:hover,
-.search-form button:focus-visible {
-  background: #edc66f;
-}
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
 
 @media (max-width: 800px) {
   .layout {

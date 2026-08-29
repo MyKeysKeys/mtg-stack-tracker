@@ -1,57 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
+import Search from './components/Search/Search';
+import Stack from './components/Stack/Stack';
 import CardVisualizer from './components/CardVisualizer/CardVisualizer';
-import { colorNames } from './constants/colors';
-import { getCardColors, getCardBackground } from './utils/cardColors';
 import './App.css';
 
 function App() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
   const [stack, setStack] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
-  const [searchNonce, setSearchNonce] = useState(0);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const dragPreviewRef = useRef(null);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const trimmedQuery = query.trim();
-
-    if (!trimmedQuery) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-
-    setResults([]);
-    const controller = new AbortController();
-    const searchTimeout = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `https://api.scryfall.com/cards/search?q=${encodeURIComponent(trimmedQuery)}`,
-          { signal: controller.signal }
-        );
-        const data = await response.json();
-        setResults(data.data ?? []);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setResults([]);
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    }, 250);
-
-    return () => {
-      controller.abort();
-      clearTimeout(searchTimeout);
-    };
-  }, [query, searchNonce]);
 
   useEffect(() => {
     function cleanupDragPreview() {
@@ -72,11 +31,6 @@ function App() {
       document.removeEventListener('visibilitychange', cleanupDragPreview);
     };
   }, []);
-
-  function searchCards(event) {
-    event.preventDefault();
-    setSearchNonce((current) => current + 1);
-  }
 
   function addToStack(card) {
     setStack((current) => [...current, card]);
@@ -158,145 +112,28 @@ function App() {
 
       <div className="layout">
         <section className="search-section">
-          <h2>Card Search</h2>
-          <form className="search-form" onSubmit={searchCards}>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search cards..."
-            />
-            <button type="submit">Search</button>
-          </form>
-
-          {loading && <p>Searching...</p>}
-
-          <div className="results">
-            {results.map((card) => (
-              <button
-                key={card.id}
-                className="search-result"
-                style={{ '--stack-card-background': getCardBackground(card) }}
-                onClick={() => addToStack(card)}
-                onMouseEnter={() => {
-                  setHoveredCard(card);
-                  setSelectedCard(card);
-                }}
-                onMouseLeave={() => setHoveredCard(null)}
-                onFocus={() => {
-                  setHoveredCard(card);
-                  setSelectedCard(card);
-                }}
-                onBlur={() => setHoveredCard(null)}
-              >
-                <span className="search-result-name">{card.name}</span>
-                <span className="mana-symbols" aria-label="Card colors">
-                  {getCardColors(card).map((color) => (
-                    <img
-                      key={color}
-                      src={`https://svgs.scryfall.io/card-symbols/${color}.svg`}
-                      alt={`${colorNames[color]} mana`}
-                    />
-                  ))}
-                </span>
-              </button>
-            ))}
-          </div>
+          <Search
+            onCardSelect={addToStack}
+            onCardHover={(card) => {
+              setHoveredCard(card);
+              if (card) setSelectedCard(card);
+            }}
+          />
         </section>
 
-        <section
-          className="stack-section"
-          onDragLeave={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) {
-              stopDragging();
-            }
-          }}
-        >
-          <div className="stack-heading">
-            <h2>Stack ({stack.length} {stack.length === 1 ? 'item' : 'items'})</h2>
-            <button
-              type="button"
-              className="clear-stack-button"
-              onClick={clearStack}
-              disabled={stack.length === 0}
-            >
-              Clear all
-            </button>
-          </div>
-          <div className="stack-list">
-            {stack.map((card, index) => (
-              <div
-                className={`stack-card${index === 0 ? ' stack-card-next' : ''}${
-                  draggedIndex === index ? ' stack-card-dragging' : ''
-                }`}
-                key={`${card.id}-${index}`}
-                style={{ '--stack-card-background': getCardBackground(card) }}
-                draggable="true"
-                onDragStart={(event) => startDragging(event, index)}
-                onDragOver={(event) => {
-                  event.preventDefault();
-                  updateDragPreview(event);
-                  const bounds = event.currentTarget.getBoundingClientRect();
-                  const targetIndex = event.clientY < bounds.top + bounds.height / 2
-                    ? index
-                    : index + 1;
-
-                  moveStackCard(targetIndex);
-                }}
-                onDrop={stopDragging}
-                onDragEnd={stopDragging}
-                onMouseEnter={() => {
-                  setHoveredCard(card);
-                  setSelectedCard(card);
-                }}
-                onMouseLeave={() => setHoveredCard(null)}
-                onFocus={() => {
-                  setHoveredCard(card);
-                  setSelectedCard(card);
-                }}
-                onBlur={() => setHoveredCard(null)}
-                tabIndex="0"
-              >
-                <div className="stack-card-details">
-                  <strong className="stack-card-name">
-                    <span>{card.name}</span>
-                    <span className="mana-symbols" aria-label="Card colors">
-                      {getCardColors(card).map((color) => (
-                        <img
-                          key={color}
-                          src={`https://svgs.scryfall.io/card-symbols/${color}.svg`}
-                          alt={`${colorNames[color]} mana`}
-                        />
-                      ))}
-                    </span>
-                  </strong>
-                  <span>{index === 0 ? 'Resolves next' : `Position ${index}`}</span>
-                </div>
-                <div className="stack-card-actions">
-                  <button
-                    type="button"
-                    className="stack-card-action stack-card-duplicate"
-                    onClick={() => duplicateStack(index)}
-                    aria-label={`Duplicate ${card.name} in the stack`}
-                    title={`Duplicate ${card.name} in the stack`}
-                  >
-                    <span className="duplicate-icon" aria-hidden="true">
-                      <span />
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="stack-card-action stack-card-remove"
-                    onClick={() => removeFromStack(index)}
-                    aria-label={`Remove ${card.name} from the stack`}
-                    title={`Remove ${card.name} from the stack`}
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <Stack
+          stack={stack}
+          onCardSelect={setSelectedCard}
+          onCardHover={setHoveredCard}
+          draggedIndex={draggedIndex}
+          onDragStart={startDragging}
+          onDragOver={updateDragPreview}
+          onDrop={stopDragging}
+          onRemove={removeFromStack}
+          onDuplicate={duplicateStack}
+          onMoveStackCard={moveStackCard}
+          onClearStack={clearStack}
+        />
 
         <section className="visualizer-section">
           <h2>Card Visualizer</h2>
