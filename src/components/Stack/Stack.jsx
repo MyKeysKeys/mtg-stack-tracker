@@ -13,6 +13,9 @@ function Stack({
   onDuplicate,
   onClearStack,
   onMoveStackCard,
+  resolutionHistory,
+  onResolveNext,
+  onUndoResolution,
 }) {
   return (
     <section
@@ -25,14 +28,24 @@ function Stack({
     >
       <div className="stack-heading">
         <h2>Stack ({stack.length} {stack.length === 1 ? 'item' : 'items'})</h2>
-        <button
-          type="button"
-          className="clear-stack-button"
-          onClick={onClearStack}
-          disabled={stack.length === 0}
-        >
-          Clear all
-        </button>
+        <div className="stack-controls">
+          <button
+            type="button"
+            className="resolve-next-button"
+            onClick={onResolveNext}
+            disabled={stack.length === 0}
+          >
+            Resolve next
+          </button>
+          <button
+            type="button"
+            className="clear-stack-button"
+            onClick={onClearStack}
+            disabled={stack.length === 0}
+          >
+            Clear all
+          </button>
+        </div>
       </div>
       <div className="stack-list">
         {stack.map((card, index) => (
@@ -59,6 +72,44 @@ function Stack({
             onDuplicate={() => onDuplicate(index)}
           />
         ))}
+      </div>
+      <div className="resolution-history" aria-live="polite">
+        <div className="resolution-history-heading">
+          <h3>Resolution history</h3>
+          <button
+            type="button"
+            className="undo-resolution-button"
+            onClick={onUndoResolution}
+            disabled={resolutionHistory.length === 0}
+          >
+            Undo
+          </button>
+        </div>
+        {resolutionHistory.length === 0 ? (
+          <p className="resolution-history-empty">No objects have resolved.</p>
+        ) : (
+          <ol className="resolution-history-list">
+            {[...resolutionHistory].reverse().map((card, index) => (
+              <li
+                key={`${card.id}-${resolutionHistory.length - index - 1}`}
+                className="resolution-history-item"
+                tabIndex="0"
+                onMouseEnter={() => {
+                  onCardHover(card);
+                  onCardSelect(card);
+                }}
+                onMouseLeave={() => onCardHover(null)}
+                onFocus={() => {
+                  onCardHover(card);
+                  onCardSelect(card);
+                }}
+                onBlur={() => onCardHover(null)}
+              >
+                {card.name}
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
     </section>
   );

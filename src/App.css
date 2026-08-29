@@ -181,8 +181,22 @@ input {
   margin-bottom: 16px;
 }
 
-.clear-stack-button {
+.stack-controls {
+  display: flex;
   flex-shrink: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stack-controls .clear-stack-button,
+.stack-controls .resolve-next-button {
+  padding: 5px 8px;
+  font-size: 0.8em;
+}
+
+.clear-stack-button,
+.resolve-next-button,
+.undo-resolution-button {
   padding: 6px 10px;
   border: 1px solid var(--gold-muted);
   border-radius: 4px;
@@ -191,13 +205,28 @@ input {
   cursor: pointer;
 }
 
-.clear-stack-button:hover,
-.clear-stack-button:focus-visible {
+.resolve-next-button {
+  border-color: var(--gold);
   background: var(--gold);
   color: #111;
 }
 
-.clear-stack-button:disabled {
+.clear-stack-button:hover,
+.clear-stack-button:focus-visible,
+.undo-resolution-button:hover,
+.undo-resolution-button:focus-visible {
+  background: var(--gold);
+  color: #111;
+}
+
+.resolve-next-button:hover,
+.resolve-next-button:focus-visible {
+  background: #edc66f;
+}
+
+.clear-stack-button:disabled,
+.resolve-next-button:disabled,
+.undo-resolution-button:disabled {
   cursor: not-allowed;
   opacity: 0.45;
 }
@@ -206,6 +235,7 @@ input {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-top: 4px;
 }
 
 .stack-card {
@@ -344,6 +374,57 @@ input {
 .mana-symbols img {
   width: 18px;
   height: 18px;
+}
+
+.resolution-history {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gold-muted);
+}
+
+.resolution-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.resolution-history h3 {
+  margin: 0;
+  color: var(--muted-gold);
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.resolution-history-empty {
+  margin: 8px 0 0;
+  color: var(--gold-muted);
+  font-size: 0.95rem;
+}
+
+.resolution-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 128px;
+  margin: 8px 0 0;
+  padding-left: 24px;
+  overflow-y: auto;
+  color: var(--muted-gold);
+}
+
+.resolution-history-list li {
+  overflow-wrap: anywhere;
+}
+
+.resolution-history-item {
+  cursor: pointer;
+}
+
+.resolution-history-item:hover,
+.resolution-history-item:focus-visible {
+  color: var(--gold);
 }
 
 /* ========================================
