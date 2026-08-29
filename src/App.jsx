@@ -6,6 +6,7 @@ import './App.css';
 
 function App() {
   const [stack, setStack] = useState([]);
+  const [resolutionHistory, setResolutionHistory] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
@@ -51,6 +52,30 @@ function App() {
 
   function clearStack() {
     setStack([]);
+  }
+
+  function resolveNext() {
+    const [resolvingCard] = stack;
+
+    if (!resolvingCard) {
+      return;
+    }
+
+    setStack((current) => current.slice(1));
+    setResolutionHistory((history) => [...history, resolvingCard]);
+    setSelectedCard(resolvingCard);
+  }
+
+  function undoResolution() {
+    const restoredCard = resolutionHistory.at(-1);
+
+    if (!restoredCard) {
+      return;
+    }
+
+    setStack((current) => [restoredCard, ...current]);
+    setResolutionHistory((history) => history.slice(0, -1));
+    setSelectedCard(restoredCard);
   }
 
   function moveStackCard(dropIndex) {
@@ -133,6 +158,9 @@ function App() {
           onDuplicate={duplicateStack}
           onMoveStackCard={moveStackCard}
           onClearStack={clearStack}
+          resolutionHistory={resolutionHistory}
+          onResolveNext={resolveNext}
+          onUndoResolution={undoResolution}
         />
 
         <section className="visualizer-section">
