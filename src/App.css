@@ -178,6 +178,13 @@ input {
   color: #111;
 }
 
+.add-player-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  background: transparent;
+  color: var(--gold);
+}
+
 .players-empty {
   margin: 8px 0 0;
   color: var(--gold-muted);
