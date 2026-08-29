@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { colorNames } from '../../constants/colors';
 import { getCardBackground, getCardColors } from '../../utils/cardColors';
 
@@ -14,7 +14,11 @@ function StackCard({
   onDrop,
   onRemove,
   onDuplicate,
+  players,
+  onAssignController,
 }) {
+  const [isControllerPickerOpen, setIsControllerPickerOpen] = useState(false);
+  const controller = players.find((player) => player.id === card.controllerId);
   return (
     <div
       className={`stack-card${isNext ? ' stack-card-next' : ''}${
@@ -52,6 +56,68 @@ function StackCard({
           </span>
         </strong>
         <span>{isNext ? 'Resolves next' : `Position ${index}`}</span>
+        <div
+          className="stack-card-controller"
+          draggable="false"
+          onMouseDown={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setIsControllerPickerOpen(false);
+            }
+          }}
+        >
+          <button
+            type="button"
+            className="controller-badge-toggle"
+            style={{ '--controller-color': controller?.color ?? 'transparent' }}
+            onClick={() => setIsControllerPickerOpen((current) => !current)}
+            aria-haspopup="true"
+            aria-expanded={isControllerPickerOpen}
+            aria-label={`Change controller of ${card.name}`}
+          />
+          {isControllerPickerOpen && (
+            <div className="controller-options" role="menu">
+              <button
+                type="button"
+                className={`controller-option${card.controllerId == null ? ' controller-option-selected' : ''}`}
+                onClick={() => {
+                  onAssignController(null);
+                  setIsControllerPickerOpen(false);
+                }}
+                role="menuitemradio"
+                aria-checked={card.controllerId == null}
+              >
+                <span
+                  className="controller-badge"
+                  style={{ '--controller-color': 'transparent' }}
+                  aria-hidden="true"
+                />
+                Unassigned
+              </button>
+              {players.map((player) => (
+                <button
+                  key={player.id}
+                  type="button"
+                  className={`controller-option${card.controllerId === player.id ? ' controller-option-selected' : ''}`}
+                  onClick={() => {
+                    onAssignController(player.id);
+                    setIsControllerPickerOpen(false);
+                  }}
+                  role="menuitemradio"
+                  aria-checked={card.controllerId === player.id}
+                >
+                  <span
+                    className="controller-badge"
+                    style={{ '--controller-color': player.color }}
+                    aria-hidden="true"
+                  />
+                  {player.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="stack-card-actions">
         <button
