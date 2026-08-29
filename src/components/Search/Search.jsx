@@ -65,7 +65,7 @@ function Search({ onCardSelect, onCardHover }) {
       {loading && <p>Searching...</p>}
 
       <div className="results">
-        {results.map((card) => (
+        {results.slice(0,20).map((card) => (
           <button
             key={card.id}
             className="search-result"
