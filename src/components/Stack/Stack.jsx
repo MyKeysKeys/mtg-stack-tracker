@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import StackCard from './StackCard';
 
 function Stack({
@@ -16,6 +16,8 @@ function Stack({
   resolutionHistory,
   onResolveNext,
   onUndoResolution,
+  players,
+  onAssignController,
 }) {
   return (
     <section
@@ -70,6 +72,8 @@ function Stack({
             onDrop={onDrop}
             onRemove={() => onRemove(index)}
             onDuplicate={() => onDuplicate(index)}
+            players={players}
+            onAssignController={(controllerId) => onAssignController(index, controllerId)}
           />
         ))}
       </div>
@@ -89,25 +93,34 @@ function Stack({
           <p className="resolution-history-empty">No objects have resolved.</p>
         ) : (
           <ol className="resolution-history-list">
-            {[...resolutionHistory].reverse().map((card, index) => (
-              <li
-                key={`${card.id}-${resolutionHistory.length - index - 1}`}
-                className="resolution-history-item"
-                tabIndex="0"
-                onMouseEnter={() => {
-                  onCardHover(card);
-                  onCardSelect(card);
-                }}
-                onMouseLeave={() => onCardHover(null)}
-                onFocus={() => {
-                  onCardHover(card);
-                  onCardSelect(card);
-                }}
-                onBlur={() => onCardHover(null)}
-              >
-                {card.name}
-              </li>
-            ))}
+            {[...resolutionHistory].reverse().map((card, index) => {
+              const controller = players.find((player) => player.id === card.controllerId);
+
+              return (
+                <li
+                  key={`${card.id}-${resolutionHistory.length - index - 1}`}
+                  className="resolution-history-item"
+                  tabIndex="0"
+                  onMouseEnter={() => {
+                    onCardHover(card);
+                    onCardSelect(card);
+                  }}
+                  onMouseLeave={() => onCardHover(null)}
+                  onFocus={() => {
+                    onCardHover(card);
+                    onCardSelect(card);
+                  }}
+                  onBlur={() => onCardHover(null)}
+                >
+                  <span
+                    className="controller-badge"
+                    style={{ '--controller-color': controller?.color ?? 'transparent' }}
+                    aria-hidden="true"
+                  />
+                  {card.name}
+                </li>
+              );
+            })}
           </ol>
         )}
       </div>
