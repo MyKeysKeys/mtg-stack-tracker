@@ -54,7 +54,7 @@ input {
 .app {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 32px 32px 32px 84px;
   font-family: inherit;
 }
 
@@ -108,18 +108,116 @@ input {
 }
 
 /* ========================================
+   SIDE NAV COMPONENT
+   ======================================== */
+
+.side-nav-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--gold-muted);
+  border-radius: 6px;
+  background: var(--panel-background);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.side-nav-toggle-bar {
+  width: 20px;
+  height: 2px;
+  background: var(--gold);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.side-nav-toggle-open .side-nav-toggle-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.side-nav-toggle-open .side-nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.side-nav-toggle-open .side-nav-toggle-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.side-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 55%);
+}
+
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  max-width: 85vw;
+  height: 100%;
+  border-right: 1px solid var(--gold-muted);
+  background: var(--panel-background);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+
+.side-nav-open {
+  transform: translateX(0);
+}
+
+.side-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 76px 20px 16px;
+  border-bottom: 1px solid var(--gold-muted);
+}
+
+.side-nav-header h2 {
+  margin: 0;
+}
+
+.side-nav-close {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gold);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.side-nav-close:hover,
+.side-nav-close:focus-visible {
+  color: #edc66f;
+}
+
+.side-nav-content {
+  flex: 1;
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+}
+
+/* ========================================
    PLAYERS COMPONENT
    ======================================== */
 
 .players-section {
   min-width: 0;
-  padding: 24px;
-  margin-bottom: 32px;
-  border: 1px solid var(--gold-muted);
-  border-radius: 8px;
-  background: var(--panel-background);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
-  animation: fadeIn 0.6s ease-in 0.2s both;
 }
 
 .players-heading {
