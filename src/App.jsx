@@ -3,6 +3,7 @@ import Search from './components/Search/Search';
 import Stack from './components/Stack/Stack';
 import CardVisualizer from './components/CardVisualizer/CardVisualizer';
 import Players from './components/Players/Players';
+import SideNav from './components/SideNav/SideNav';
 import { createPlayer, playerColorPalette } from './constants/players';
 import './App.css';
 
@@ -203,16 +204,18 @@ function App() {
     <main className="app">
       <h1>MTG Stack Tracker</h1>
 
-      <Players
-        players={players}
-        activePlayerId={activePlayerId}
-        maxPlayers={maxPlayers}
-        onAddPlayer={addPlayer}
-        onRenamePlayer={renamePlayer}
-        onRecolorPlayer={recolorPlayer}
-        onRemovePlayer={removePlayer}
-        onSetActivePlayer={setActivePlayerId}
-      />
+      <SideNav>
+        <Players
+          players={players}
+          activePlayerId={activePlayerId}
+          maxPlayers={maxPlayers}
+          onAddPlayer={addPlayer}
+          onRenamePlayer={renamePlayer}
+          onRecolorPlayer={recolorPlayer}
+          onRemovePlayer={removePlayer}
+          onSetActivePlayer={setActivePlayerId}
+        />
+      </SideNav>
 
       <div className="layout">
         <section className="search-section">
